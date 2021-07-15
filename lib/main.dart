@@ -8,7 +8,6 @@ import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'dart:ui' as ui;
 import 'dart:async';
 import 'dart:convert';
-import 'dart:js' as js;
 
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
@@ -74,20 +73,11 @@ class _MyHomePageState extends State<MyHomePage> {
         .drawImage(PdfBitmap(imageBytes), Rect.fromLTWH(25, 50, 300, 300));
     List<int> byteData = document.save();
     document.dispose();
-
-    if (kIsWeb) {
-      js.context['pdfData'] = base64.encode(byteData);
-      js.context['filename'] = 'Output.pdf';
-      Timer.run(() {
-        js.context.callMethod('download');
-      });
-    } else {
       Directory? directory = await getExternalStorageDirectory();
       String path = directory!.path;
       print(path.toString() + ' Path');
       File file = File('$path/Output.pdf');
       await file.writeAsBytes(byteData, flush: true);
       OpenFile.open('$path/Output.pdf');
-    }
   }
 }
